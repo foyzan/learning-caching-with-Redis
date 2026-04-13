@@ -1,4 +1,4 @@
-const { userService } = require("../libs");
+const { userService, articleService } = require("../libs");
 
 
 const registerUser = async (req, res, next) => {
@@ -33,6 +33,35 @@ const getUserProfile = async (req, res, next) => {
 };
 
 
+const getUserArticles = async (req, res, next) => {
+    try {
+        // 1. Extract params and the authenticated User ID
+        const { search = '', page = 1, limit = 10 } = req.query;
+        const userId = '69dcd28d3782afe63008918f'; // Assumes your auth middleware populates req.user
+
+        // 2. Pass the userId to your service to filter the results
+        const result = await articleService.findAllArticles({ 
+            search, 
+            page: parseInt(page), 
+            limit: parseInt(limit),
+            authorId: userId // Pass this to filter by owner
+        });
+
+        res.status(200).json({
+            success: true,
+            data: result.articles,
+            pagination: {
+                totalItems: result.totalArticles,
+                totalPages: result.totalPages,
+                currentPage: result.currentPage
+            }
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+
 const removeUser = async (req, res, next) => {
     try {
         const { email } = req.params;
@@ -51,5 +80,6 @@ const removeUser = async (req, res, next) => {
 module.exports = {
     registerUser,
     getUserProfile,
-    removeUser
+    removeUser,
+    getUserArticles
 };

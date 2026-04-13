@@ -17,6 +17,8 @@ app.use((err, req, res, next) => {
     // 1. Log the error for the developers
     console.error(`[Error] ${err.message}`);
 
+    console.log(err)
+
     // 2. Determine the status code
     const statusCode = err.status || 500;
 

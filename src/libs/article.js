@@ -8,9 +8,40 @@ const createArticle = async ({ title, body, status = 'published', author = '69dc
     return { ...article.toObject(), id: article._id };
 };
 
-const findAllArticles = async () => {
-    // .lean() makes the query faster by returning plain JS objects
-    return await Articles.find().lean();
+const findAllArticles = async (query = {}) => {
+    const { 
+        search, 
+        page = 1, 
+        limit = 10 
+    } = query;
+
+    // 1. Build the search filter
+    // Uses regex for a case-insensitive partial match on title or content
+    const filter = search 
+        ? { 
+            $or: [
+                { title: { $regex: search, $options: 'i' } },
+                { content: { $regex: search, $options: 'i' } }
+            ] 
+          } 
+        : {};
+
+    // 2. Execute query with pagination logic
+    const articles = await Articles.find(filter)
+        .limit(limit * 1)             // Convert to number and restrict results
+        .skip((page - 1) * limit)     // Skip previous pages
+        .sort({ createdAt: -1 })      // Usually best to show newest first
+        .lean();
+
+    // 3. Get total count for frontend pagination UI
+    const total = await Articles.countDocuments(filter);
+
+    return {
+        articles,
+        totalPages: Math.ceil(total / limit),
+        currentPage: Number(page),
+        totalArticles: total
+    };
 };
 
 const findSingleArticles = async ({ id }) => {

@@ -7,10 +7,16 @@ const router = require('express').Router();
 router.route("/users/register")
     .post(userController.registerUser);
 
+router.route("/users/articles")
+.get(userController.getUserArticles)
 // Routes for a specific user based on email
+
 router.route("/users/:email")
     .get(userController.getUserProfile) // Get profile by email
     .delete(userController.removeUser); // Delete user by email
+
+
+
 
 router.route("/articles")
 .get(articleController.getAllArticles)

@@ -15,12 +15,37 @@ const createArticle = async (req, res, next) => {
 
 const getAllArticles = async (req, res, next) => {
     try {
-        const articles = await articleService.findAllArticles();
-        res.status(200).json(articles);
+        // 1. Extract query parameters with sensible defaults
+        const { 
+            search = '', 
+            page = 1, 
+            limit = 10 
+        } = req.query;
+
+        // 2. Pass the query object to the service
+        // This now returns { articles, totalPages, currentPage, totalArticles }
+        const result = await articleService.findAllArticles({ 
+            search, 
+            page: parseInt(page), 
+            limit: parseInt(limit) 
+        });
+
+        // 3. Send the structured response
+        res.status(200).json({
+            success: true,
+            data: result.articles,
+            pagination: {
+                totalItems: result.totalArticles,
+                totalPages: result.totalPages,
+                currentPage: result.currentPage,
+                limit: parseInt(limit)
+            }
+        });
     } catch (err) {
         next(err);
     }
 };
+
 
 const getArticleById = async (req, res, next) => {
     try {
