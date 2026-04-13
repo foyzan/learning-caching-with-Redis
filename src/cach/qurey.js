@@ -22,4 +22,6 @@ const getJSON = async (key) =>{
     const json = await cache.get(key);
 
     if(json) return JSON.parse(json);
+
+    return null
 }
