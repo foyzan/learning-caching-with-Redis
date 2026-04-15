@@ -13,7 +13,7 @@ const getUsersArticleKey = (userId)=>{
 
     Object.freeze(key)
 
-    getDynamicKeysWithUser(key.userArticles, userId)
+    return getDynamicKeysWithUser(key.userArticles, userId)
 
 
 }

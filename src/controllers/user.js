@@ -1,5 +1,5 @@
 const { userService, articleService } = require("../libs");
-
+const userCache = require('../cache/userCaching')
 
 const registerUser = async (req, res, next) => {
     try {
@@ -40,12 +40,21 @@ const getUserArticles = async (req, res, next) => {
         const userId = '69dcd28d3782afe63008918f'; // Assumes your auth middleware populates req.user
 
         // 2. Pass the userId to your service to filter the results
-        const result = await articleService.findAllArticles({ 
-            search, 
-            page: parseInt(page), 
+
+        let result = await userCache.fetchUserAllArticle(userId);
+        
+        if (!result) {
+          result = await articleService.findAllArticles({
+            search,
+            page: parseInt(page),
             limit: parseInt(limit),
-            authorId: userId // Pass this to filter by owner
-        });
+            authorId: userId, // Pass this to filter by owner
+          });
+
+          console.log('DB hit')
+
+          await userCache.saveUserAllArticle(userId, result);
+        }
 
         res.status(200).json({
             success: true,

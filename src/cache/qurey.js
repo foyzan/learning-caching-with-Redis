@@ -6,10 +6,10 @@ const setJSON = async (key, value, expire = null) =>{
     const json = JSON.stringify(value)
     if(expire){
         const ttlMills = expire?.getTime() - Date.now()
-        return cache.set(key, value, {PX: ttlMills});
+        return cache.set(key, json, {PX: ttlMills});
     }
 
-    return cache.set(key, value);
+    return cache.set(key, json);
 }
 
 
@@ -24,4 +24,10 @@ const getJSON = async (key) =>{
     if(json) return JSON.parse(json);
 
     return null
+}
+
+
+module.exports = {
+    getJSON,
+    setJSON
 }

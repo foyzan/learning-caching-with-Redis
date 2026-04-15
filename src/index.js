@@ -3,7 +3,7 @@ require('dotenv').config()
 const http = require('http');
 const app = require('./app');
 const connectDB = require('./db/connectDB');
-const redisClient = require('./cach/index');
+const redisClient = require('./cache/index');
 const server = http.createServer(app)
 
 const  main = async () =>{
