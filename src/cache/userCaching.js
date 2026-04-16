@@ -6,7 +6,7 @@ const saveUserAllArticle = (userid, articles) =>{
 
     const key = getUsersArticleKey(userid);
 
-    const expire = new Date(Date.now() + 10000);
+    const expire = new Date(Date.now() + 600000);
 
     return setJSON(key, articles, expire);
 }

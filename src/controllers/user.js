@@ -42,7 +42,6 @@ const getUserArticles = async (req, res, next) => {
         // 2. Pass the userId to your service to filter the results
 
         let result = await userCache.fetchUserAllArticle(userId);
-        
         if (!result) {
           result = await articleService.findAllArticles({
             search,
